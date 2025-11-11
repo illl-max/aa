@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SeatFlow - 智能图书馆座位管理系统</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+            --dark: #1f2937;
+            --light: #f8fafc;
+            --gray: #6b7280;
+            --gradient: linear-gradient(135deg, #6366f1, #8b5cf6);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fb;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* 导航栏样式 */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo i {
+            margin-right: 10px;
+            color: var(--accent);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 2rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+
+        .nav-links a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .mobile-menu {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* 英雄区域样式 */
+        .hero {
+            background: linear-gradient(rgba(67, 97, 238, 0.8), rgba(58, 12, 163, 0.9)), url('https://images.unsplash.com/photo-1521587760476-6c12a4b040da?ixlib=rb-4.0.3&auto=format&fit=crop&w=1740&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 6rem 0;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background-color: var(--accent);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .cta-button:hover {
+            background-color: #3ab0d5;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        /* 部分通用样式 */
+        section {
+            padding: 5rem 0;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: var(--secondary);
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+        .section-title p {
+            color: #666;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* 高级功能区域样式 */
+        .features {
+            background-color: white;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2.5rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s ease;
+            text-align: center;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.1), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .feature-card:hover::before {
+            left: 100%;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            border-color: var(--primary);
+        }
+
+        .feature-icon {
+            font-size: 3.5rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+
+        .feature-card h3 {
+            font-size: 1.6rem;
+            margin-bottom: 1rem;
+            color: var(--secondary);
+            font-weight: 700;
+        }
+
+        .feature-card p {
+            color: var(--gray);
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .feature-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: var(--light);
+            border-radius: 10px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .feature-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--primary);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .feature-action:hover {
+            background: var(--primary-dark);
+            transform: translateX(5px);
+        }
+
+        /* 功能详情页面样式 */
+        .feature-detail {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+        }
+
+        .detail-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            max-width: 800px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .close-detail {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+            transition: color 0.3s ease;
+        }
+
+        .close-detail:hover {
+            color: var(--danger);
+        }
+
+        /* 座位预约系统样式 */
+        .booking-system {
+            background: var(--light);
+        }
+
+        .booking-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: start;
+        }
+
+        .library-selector {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .library-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .library-option {
+            background: var(--light);
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .library-option:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .library-option.active {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .library-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .seat-map-container {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .floor-selector {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            justify-content: center;
+        }
+
+        .floor-btn {
+            padding: 0.5rem 1.5rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 25px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .floor-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .seat-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .seat {
+            aspect-ratio: 1;
+            background: #10b981;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            font-size: 0.9rem;
+        }
+
+        .seat.occupied {
+            background: #ef4444;
+            cursor: not-allowed;
+        }
+
+        .seat.selected {
+            background: var(--primary);
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+        }
+
+        .seat.has-outlet::after {
+            content: '⚡';
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            font-size: 0.8rem;
+        }
+
+        .booking-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            margin-top: 2rem;
+        }
+
+        .booking-info {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .selected-seat-display {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 0.5rem 0;
+        }
+
+        .time-selector {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .time-option {
+            padding: 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .time-option:hover {
+            border-color: var(--primary);
+        }
+
+        .time-option.active {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .booking-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--light);
+            color: var(--dark);
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        /* 团队区域样式 */
+        .team {
+            background-color: white;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .team-member {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .team-member:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .member-img {
+            height: 200px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: white;
+        }
+
+        .member-info {
+            padding: 2rem;
+        }
+
+        .member-info h3 {
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+            color: var(--secondary);
+            font-weight: 700;
+        }
+
+        .member-role {
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: block;
+            font-size: 1.1rem;
+        }
+
+        .member-contact {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .contact-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .contact-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .mobile-menu {
+                display: block;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .booking-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .seat-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">
+                    <i class="fas fa-wave-square"></i>
+                    <span>SeatFlow</span>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="#home">首页</a></li>
+                    <li><a href="#features">核心功能</a></li>
+                    <li><a href="#booking">立即预约</a></li>
+                    <li><a href="#team">核心团队</a></li>
+                    <li><a href="#contact">联系我们</a></li>
+                </ul>
+                <div class="mobile-menu">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 英雄区域 -->
+    <section class="hero" id="home">
+        <div class="container">
+            <h1>重新定义图书馆座位体验</h1>
+            <p>SeatFlow - 基于智能算法的座位流动管理系统，让每个座位都物尽其用，让每次学习都高效专注</p>
+            <a href="#booking" class="cta-button">立即体验</a>
+        </div>
+    </section>
+
+    <!-- 功能区域 -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>核心功能</h2>
+                <p>点击了解每个功能的详细信息和特色</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card" onclick="showFeatureDetail('map')">
+                    <div class="feature-icon">
+                        <i class="fas fa-map-marked-alt"></i>
+                    </div>
+                    <h3>智能座位地图</h3>
+                    <p>实时可视化显示图书馆座位状态，支持多种筛选条件和个性化推荐</p>
+                    <div class="feature-stats">
+                        <div class="stat">
+                            <span class="stat-number">98%</span>
+                            <span class="stat-label">准确率</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">实时</span>
+                            <span class="stat-label">状态更新</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">多维度</span>
+                            <span class="stat-label">筛选条件</span>
+                        </div>
+                    </div>
+                    <a href="#" class="feature-action" onclick="event.stopPropagation(); showFeatureDetail('map')">
+                        查看详情 <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <div class="feature-card" onclick="showFeatureDetail('booking')">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>智能预约系统</h3>
+                    <p>一键预约、智能暂离、信用积分，打造公平高效的座位使用环境</p>
+                    <div class="feature-stats">
+                        <div class="stat">
+                            <span class="stat-number">30秒</span>
+                            <span class="stat-label">快速预约</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">智能</span>
+                            <span class="stat-label">暂离管理</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">公平</span>
+                            <span class="stat-label">信用体系</span>
+                        </div>
+                    </div>
+                    <a href="#" class="feature-action" onclick="event.stopPropagation(); showFeatureDetail('booking')">
+                        查看详情 <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <div class="feature-card" onclick="showFeatureDetail('analytics')">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>数据分析平台</h3>
+                    <p>深度数据分析，为图书馆管理和用户行为提供智能洞察</p>
+                    <div class="feature-stats">
+                        <div class="stat">
+                            <span class="stat-number">24/7</span>
+                            <span class="stat-label">实时监控</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">智能</span>
+                            <span class="stat-label">预测分析</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">深度</span>
+                            <span class="stat-label">数据洞察</span>
+                        </div>
+                    </div>
+                    <a href="#" class="feature-action" onclick="event.stopPropagation(); showFeatureDetail('analytics')">
+                        查看详情 <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 功能详情弹窗 -->
+    <div id="featureDetail" class="feature-detail">
+        <div class="detail-content">
+            <button class="close-detail" onclick="closeFeatureDetail()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div id="detailContent">
+                <!-- 详情内容将通过JavaScript动态加载 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 座位预约系统 -->
+    <section class="booking-system" id="booking">
+        <div class="container">
+            <div class="section-title">
+                <h2>座位预约</h2>
+                <p>选择图书馆和座位，开始您的学习之旅</p>
+            </div>
+            
+            <div class="booking-container">
+                <div class="library-selector">
+                    <h3>选择图书馆</h3>
+                    <div class="library-options">
+                        <div class="library-option active" data-library="main">
+                            <div class="library-icon">
+                                <i class="fas fa-building"></i>
+                            </div>
+                            <div>主图书馆</div>
+                        </div>
+                        <div class="library-option" data-library="science">
+                            <div class="library-icon">
+                                <i class="fas fa-flask"></i>
+                            </div>
+                            <div>科技分馆</div>
+                        </div>
+                        <div class="library-option" data-library="arts">
+                            <div class="library-icon">
+                                <i class="fas fa-palette"></i>
+                            </div>
+                            <div>人文分馆</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="seat-map-container">
+                    <h3>选择座位</h3>
+                    <div class="floor-selector">
+                        <button class="floor-btn active" data-floor="3">3楼</button>
+                        <button class="floor-btn" data-floor="4">4楼</button>
+                        <button class="floor-btn" data-floor="5">5楼</button>
+                    </div>
+                    
+                    <div class="seat-grid" id="seatGrid">
+                        <!-- 座位将通过JavaScript动态生成 -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="booking-panel" id="bookingPanel">
+                <div class="booking-info">
+                    <div>当前选择</div>
+                    <div class="selected-seat-display" id="selectedSeatDisplay">请选择座位</div>
+                    <div class="time-info" id="timeInfo"></div>
+                </div>
+                
+                <div class="time-selector">
+                    <div class="time-option" data-duration="2">
+                        <div>2小时</div>
+                        <small>快速学习</small>
+                    </div>
+                    <div class="time-option active" data-duration="4">
+                        <div>4小时</div>
+                        <small>标准时长</small>
+                    </div>
+                    <div class="time-option" data-duration="6">
+                        <div>6小时</div>
+                        <small>深度学习</small>
+                    </div>
+                </div>
+                
+                <div class="booking-actions">
+                    <button class="btn btn-secondary" id="cancelBtn">取消选择</button>
+                    <button class="btn btn-primary" id="confirmBtn">确认预约</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 团队区域 -->
+    <section class="team" id="team">
+        <div class="container">
+            <div class="section-title">
+                <h2>核心团队</h2>
+                <p>优秀的团队是项目成功的基石</p>
+            </div>
+            <div class="team-grid">
+                <div class="team-member">
+                    <div class="member-img">
+                        <i class="fas fa-crown"></i>
+                    </div>
+                    <div class="member-info">
+                        <h3>王杰文</h3>
+                        <span class="member-role">首席执行官 (CEO)</span>
+                        <p>负责项目整体战略规划、资源协调和重大决策制定，确保项目发展方向正确</p>
+                        <div class="member-contact">
+                            <a href="#" class="contact-btn"><i class="fas fa-envelope"></i></a>
+                            <a href="#" class="contact-btn"><i class="fas fa-phone"></i></a>
+                            <a href="#" class="contact-btn"><i class="fab fa-linkedin"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="team-member">
+                    <div class="member-img">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="member-info">
+                        <h3>蔡罗乐</h3>
+                        <span class="member-role">市场与用户总监 (CMO)</span>
+                        <p>负责用户需求调研、市场推广策略制定和品牌建设，连接产品与用户</p>
+                        <div class="member-contact">
+                            <a href="#" class="contact-btn"><i class="fas fa-envelope"></i></a>
+                            <a href="#" class="contact-btn"><i class="fas fa-phone"></i></a>
+                            <a href="#" class="contact-btn"><i class="fab fa-linkedin"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="team-member">
+                    <div class="member-img">
+                        <i class="fas fa-pencil-ruler"></i>
+                    </div>
+                    <div class="member-info">
+                        <h3>颜迪</h3>
+                        <span class="member-role">产品总监 (CPO)</span>
+                        <p>负责产品设计、用户体验优化和功能规划，打造用户喜爱的产品体验</p>
+                        <div class="member-contact">
+                            <a href="#" class="contact-btn"><i class="fas fa-envelope"></i></a>
+                            <a href="#" class="contact-btn"><i class="fas fa-phone"></i></a>
+                            <a href="#" class="contact-btn"><i class="fab fa-linkedin"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <!-- 新增的三个团队成员 -->
+                <div class="team-member">
+                    <div class="member-img">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <div class="member-info">
+                        <h3>刘蕴宽</h3>
+                        <span class="member-role">首席技术官 (CTO)</span>
+                        <p>负责技术架构设计、研发团队管理和技术创新，确保系统稳定高效运行</p>
+                        <div class="member-contact">
+                            <a href="#" class="contact-btn"><i class="fas fa-envelope"></i></a>
+                            <a href="#" class="contact-btn"><i class="fas fa-phone"></i></a>
+                            <a href="#" class="contact-btn"><i class="fab fa-linkedin"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="team-member">
+                    <div class="member-img">
+                        <i class="fas fa-chart-pie"></i>
+                    </div>
+                    <div class="member-info">
+                        <h3>袁仔耀</h3>
+                        <span class="member-role">首席财务官 (CFO)</span>
+                        <p>负责财务规划、资金管理和风险控制，确保公司财务健康稳定发展</p>
+                        <div class="member-contact">
+                            <a href="#" class="contact-btn"><i class="fas fa-envelope"></i></a>
+                            <a href="#" class="contact-btn"><i class="fas fa-phone"></i></a>
+                            <a href="#" class="contact-btn"><i class="fab fa-linkedin"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="team-member">
+                    <div class="member-img">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <div class="member-info">
+                        <h3>陈虞彬</h3>
+                        <span class="member-role">首席运营官 (COO)</span>
+                        <p>负责日常运营管理、流程优化和团队协作，提升整体运营效率和用户体验</p>
+                        <div class="member-contact">
+                            <a href="#" class="contact-btn"><i class="fas fa-envelope"></i></a>
+                            <a href="#" class="contact-btn"><i class="fas fa-phone"></i></a>
+                            <a href="#" class="contact-btn"><i class="fab fa-linkedin"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // 功能详情数据
+        const featureDetails = {
+            'map': {
+                title: '智能座位地图',
+                icon: 'fa-map-marked-alt',
+                description: '基于实时数据的可视化座位管理系统，为用户提供最直观的座位选择体验',
+                features: [
+                    '实时座位状态监控和更新',
+                    '多维度筛选（区域、插座、安静程度）',
+                    '个性化座位推荐算法',
+                    '移动端优化的交互设计',
+                    '离线地图缓存功能'
+                ],
+                stats: {
+                    '状态准确率': '98%',
+                    '更新频率': '实时',
+                    '覆盖区域': '全馆座位'
+                }
+            },
+            'booking': {
+                title: '智能预约系统',
+                icon: 'fa-mobile-alt',
+                description: '完整的座位预约管理解决方案，确保座位资源的公平高效利用',
+                features: [
+                    '一键快速预约流程',
+                    '智能暂离和自动释放机制',
+                    '信用积分和奖惩系统',
+                    '预约提醒和续约功能',
+                    '团体预约和座位共享'
+                ],
+                stats: {
+                    '平均预约时间': '30秒',
+                    '预约成功率': '95%',
+                    '用户满意度': '4.8/5'
+                }
+            },
+            'analytics': {
+                title: '数据分析平台',
+                icon: 'fa-chart-line',
+                description: '深度数据分析和智能洞察，为图书馆管理和用户行为提供决策支持',
+                features: [
+                    '实时使用率监控和预测',
+                    '用户行为模式分析',
+                    '座位利用率优化建议',
+                    '异常使用检测和预警',
+                    '数据可视化报表生成'
+                ],
+                stats: {
+                    '数据处理量': '10万+/天',
+                    '预测准确率': '92%',
+                    '报表生成': '自动化'
+                }
+            }
+        };
+
+        // 显示功能详情
+        function showFeatureDetail(featureId) {
+            const detail = featureDetails[featureId];
+            const detailContent = document.getElementById('detailContent');
+            
+            let statsHTML = '';
+            for (const [key, value] of Object.entries(detail.stats)) {
+                statsHTML += `
+                    <div class="stat">
+                        <span class="stat-number">${value}</span>
+                        <span class="stat-label">${key}</span>
+                    </div>
+                `;
+            }
+
+            detailContent.innerHTML = `
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <i class="fas ${detail.icon} fa-3x" style="color: var(--primary); margin-bottom: 1rem;"></i>
+                    <h2 style="color: var(--secondary); margin-bottom: 1rem;">${detail.title}</h2>
+                    <p style="color: var(--gray); font-size: 1.1rem;">${detail.description}</p>
+                </div>
+                
+                <div class="feature-stats" style="margin: 2rem 0;">
+                    ${statsHTML}
+                </div>
+                
+                <div style="margin: 2rem 0;">
+                    <h3 style="color: var(--secondary); margin-bottom: 1rem;">主要特性</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        ${detail.features.map(feature => `
+                            <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--light); display: flex; align-items: center;">
+                                <i class="fas fa-check" style="color: var(--secondary); margin-right: 0.5rem;"></i>
+                                ${feature}
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+                
+                <div style="text-align: center; margin-top: 2rem;">
+                    <button class="btn btn-primary" onclick="closeFeatureDetail(); document.getElementById('booking').scrollIntoView({behavior: 'smooth'})">
+                        立即体验 <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            `;
+            
+            document.getElementById('featureDetail').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        // 关闭功能详情
+        function closeFeatureDetail() {
+            document.getElementById('featureDetail').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // 座位数据
+        const seatData = {
+            '3': [
+                { id: 'A01', available: true, hasOutlet: true },
+                { id: 'A02', available: true, hasOutlet: false },
+                { id: 'A03', available: false, hasOutlet: true },
+                { id: 'A04', available: true, hasOutlet: false },
+                { id: 'A05', available: true, hasOutlet: true },
+                { id: 'A06', available: false, hasOutlet: false },
+                { id: 'B01', available: true, hasOutlet: false },
+                { id: 'B02', available: true, hasOutlet: true },
+                { id: 'B03', available: true, hasOutlet: false },
+                { id: 'B04', available: false, hasOutlet: true },
+                { id: 'B05', available: true, hasOutlet: false },
+                { id: 'B06', available: true, hasOutlet: true }
+            ],
+            '4': [
+                { id: 'C01', available: true, hasOutlet: true },
+                { id: 'C02', available: true, hasOutlet: false },
+                { id: 'C03', available: true, hasOutlet: true },
+                { id: 'C04', available: false, hasOutlet: false },
+                { id: 'D01', available: true, hasOutlet: false },
+                { id: 'D02', available: true, hasOutlet: true },
+                { id: 'D03', available: false, hasOutlet: false },
+                { id: 'D04', available: true, hasOutlet: true }
+            ],
+            '5': [
+                { id: 'E01', available: true, hasOutlet: true },
+                { id: 'E02', available: true, hasOutlet: true },
+                { id: 'E03', available: true, hasOutlet: true },
+                { id: 'E04', available: true, hasOutlet: true },
+                { id: 'F01', available: true, hasOutlet: false },
+                { id: 'F02', available: true, hasOutlet: false },
+                { id: 'F03', available: true, hasOutlet: false },
+                { id: 'F04', available: true, hasOutlet: false }
+            ]
+        };
+
+        let selectedSeat = null;
+        let selectedDuration = 4;
+
+        // 初始化座位地图
+        function initializeSeatMap(floor) {
+            const seatGrid = document.getElementById('seatGrid');
+            seatGrid.innerHTML = '';
+            
+            const seats = seatData[floor];
+            
+            seats.forEach(seat => {
+                const seatElement = document.createElement('div');
+                seatElement.className = 'seat';
+                seatElement.textContent = seat.id;
+                
+                if (!seat.available) {
+                    seatElement.classList.add('occupied');
+                }
+                
+                if (seat.hasOutlet) {
+                    seatElement.classList.add('has-outlet');
+                }
+                
+                if (seat.available) {
+                    seatElement.addEventListener('click', () => selectSeat(seat));
+                }
+                
+                seatGrid.appendChild(seatElement);
+            });
+        }
+
+        // 选择座位
+        function selectSeat(seat) {
+            selectedSeat = seat;
+            
+            // 更新UI
+            document.querySelectorAll('.seat').forEach(seatEl => {
+                seatEl.classList.remove('selected');
+            });
+            
+            event.target.classList.add('selected');
+            
+            // 更新预约面板
+            document.getElementById('selectedSeatDisplay').textContent = `座位 ${seat.id}`;
+            updateTimeInfo();
+        }
+
+        // 更新时间信息
+        function updateTimeInfo() {
+            const now = new Date();
+            const endTime = new Date(now.getTime() + selectedDuration * 60 * 60 * 1000);
+            
+            const timeString = `预约时间: ${now.getHours().toString().padStart(2, '0')}:00 - ${endTime.getHours().toString().padStart(2, '0')}:00`;
+            document.getElementById('timeInfo').textContent = timeString;
+        }
+
+        // 初始化事件监听
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化3楼座位
+            initializeSeatMap('3');
+            updateTimeInfo();
+            
+            // 楼层切换
+            document.querySelectorAll('.floor-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.floor-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    initializeSeatMap(this.dataset.floor);
+                    selectedSeat = null;
+                    document.getElementById('selectedSeatDisplay').textContent = '请选择座位';
+                    document.getElementById('timeInfo').textContent = '';
+                });
+            });
+            
+            // 时长选择
+            document.querySelectorAll('.time-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.time-option').forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                    selectedDuration = parseInt(this.dataset.duration);
+                    if (selectedSeat) {
+                        updateTimeInfo();
+                    }
+                });
+            });
+            
+            // 取消选择
+            document.getElementById('cancelBtn').addEventListener('click', function() {
+                selectedSeat = null;
+                document.querySelectorAll('.seat').forEach(seat => seat.classList.remove('selected'));
+                document.getElementById('selectedSeatDisplay').textContent = '请选择座位';
+                document.getElementById('timeInfo').textContent = '';
+            });
+            
+            // 确认预约
+            document.getElementById('confirmBtn').addEventListener('click', function() {
+                if (selectedSeat) {
+                    alert(`🎉 预约成功！\n座位: ${selectedSeat.id}\n时长: ${selectedDuration}小时\n请按时到达图书馆，祝您学习愉快！`);
+                    // 这里可以添加实际的预约逻辑
+                } else {
+                    alert('请先选择一个座位');
+                }
+            });
+            
+            // 图书馆选择
+            document.querySelectorAll('.library-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.library-option').forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                    // 这里可以加载不同图书馆的座位数据
+                    initializeSeatMap('3');
+                    selectedSeat = null;
+                    document.getElementById('selectedSeatDisplay').textContent = '请选择座位';
+                    document.getElementById('timeInfo').textContent = '';
+                });
+            });
+
+            // 移动端菜单
+            document.querySelector('.mobile-menu').addEventListener('click', function() {
+                document.querySelector('.nav-links').classList.toggle('active');
+            });
+
+            // 平滑滚动
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    if(targetId === '#') return;
+                    const targetElement = document.querySelector(targetId);
+                    if(targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                        document.querySelector('.nav-links').classList.remove('active');
+                    }
+                });
+            });
+
+            // 点击弹窗外部关闭
+            document.getElementById('featureDetail').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeFeatureDetail();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
